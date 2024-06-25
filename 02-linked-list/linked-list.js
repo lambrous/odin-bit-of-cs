@@ -99,4 +99,65 @@ class LinkedList {
 		string += "null";
 		return string;
 	}
+
+	#getNodePair(index) {
+		let prev;
+		let current;
+		let pointer = this.head;
+
+		for (let i = 0; i <= index; i++) {
+			if (i === index - 1) {
+				prev = pointer;
+			} else if (i === index) {
+				current = pointer;
+				break;
+			}
+			pointer = pointer.nextNode;
+		}
+		return [prev, current];
+	}
+
+	insertAt(value, index) {
+		if (index < 0 || index > this.size) {
+			throw new Error("Invalid index");
+		}
+
+		if (index === 0) {
+			this.prepend(value);
+			return;
+		}
+
+		if (index === this.size) {
+			this.append(value);
+			return;
+		}
+
+		const nodeToInsert = new Node(value);
+		const [nodeBefore, nodeAfter] = this.#getNodePair(index);
+
+		nodeBefore.nextNode = nodeToInsert;
+		nodeToInsert.nextNode = nodeAfter;
+		this.size++;
+	}
+
+	removeAt(index) {
+		if (index < 0 || index >= this.size) {
+			throw new Error("Invalid index");
+		}
+
+		if (index === this.size - 1) {
+			this.pop();
+			return;
+		}
+
+		if (index === 0) {
+			this.head = this.head.nextNode;
+			this.size--;
+			return;
+		}
+
+		const [nodeBefore, nodeToRemove] = this.#getNodePair(index);
+		nodeBefore.nextNode = nodeToRemove.nextNode;
+		this.size--;
+	}
 }
