@@ -1,24 +1,36 @@
 class Node {
-	constructor(value = null, nextNode = null) {
+	#nextNode = null;
+
+	constructor(value = null) {
 		this.value = value;
-		this.nextNode = nextNode;
+	}
+
+	get nextNode() {
+		return this.#nextNode;
+	}
+
+	set nextNode(node) {
+		if (node != null && !(node instanceof Node)) {
+			throw new Error("Invalid nextNode: Node expected");
+		}
+		this.#nextNode = node;
 	}
 }
 
 class LinkedList {
-	head = null;
-	size = 0;
+	#head = null;
+	#size = 0;
 
 	append(value) {
 		const node = new Node(value);
-		this.size++;
+		this.#size++;
 
-		if (this.head === null) {
-			this.head = node;
+		if (this.#head == null) {
+			this.#head = node;
 			return;
 		}
 
-		let pointer = this.head;
+		let pointer = this.#head;
 		while (pointer.nextNode) {
 			pointer = pointer.nextNode;
 		}
@@ -27,23 +39,31 @@ class LinkedList {
 
 	prepend(value) {
 		const node = new Node(value);
-		node.nextNode = this.head;
-		this.head = node;
-		this.size++;
+		node.nextNode = this.#head;
+		this.#head = node;
+		this.#size++;
+	}
+
+	get size() {
+		return this.#size;
+	}
+
+	get head() {
+		return this.#head;
 	}
 
 	get tail() {
-		let pointer = this.head;
+		let pointer = this.#head;
 		while (pointer?.nextNode) pointer = pointer.nextNode;
 		return pointer;
 	}
 
 	at(index) {
-		if (index >= this.size || index < 0) {
+		if (index >= this.#size || index < 0) {
 			return null;
 		}
 
-		let pointer = this.head;
+		let pointer = this.#head;
 		for (let i = 0; i !== index; i++) {
 			pointer = pointer.nextNode;
 		}
@@ -52,20 +72,20 @@ class LinkedList {
 	}
 
 	pop() {
-		if (this.size === 0) return;
-		if (this.size === 1) {
-			this.head = null;
-			this.size--;
+		if (this.#size === 0) return;
+		if (this.#size === 1) {
+			this.#head = null;
+			this.#size--;
 			return;
 		}
 
-		const beforeLastNode = this.at(this.size - 2);
+		const beforeLastNode = this.at(this.#size - 2);
 		beforeLastNode.nextNode = null;
-		this.size--;
+		this.#size--;
 	}
 
 	contains(value) {
-		let pointer = this.head;
+		let pointer = this.#head;
 
 		while (pointer) {
 			if (pointer.value === value) return true;
@@ -76,9 +96,9 @@ class LinkedList {
 	}
 
 	find(value) {
-		let pointer = this.head;
+		let pointer = this.#head;
 
-		for (let i = 0; pointer !== null; i++) {
+		for (let i = 0; pointer != null; i++) {
 			if (pointer.value === value) return i;
 			pointer = pointer.nextNode;
 		}
@@ -87,8 +107,8 @@ class LinkedList {
 	}
 
 	toString() {
-		if (!this.head) return null;
-		let pointer = this.head;
+		if (!this.#head) return null;
+		let pointer = this.#head;
 		let string = "";
 
 		while (pointer) {
@@ -103,7 +123,7 @@ class LinkedList {
 	#getNodePair(index) {
 		let prev;
 		let current;
-		let pointer = this.head;
+		let pointer = this.#head;
 
 		for (let i = 0; i <= index; i++) {
 			if (i === index - 1) {
@@ -118,7 +138,7 @@ class LinkedList {
 	}
 
 	insertAt(value, index) {
-		if (index < 0 || index > this.size) {
+		if (index < 0 || index > this.#size) {
 			throw new Error("Invalid index");
 		}
 
@@ -127,7 +147,7 @@ class LinkedList {
 			return;
 		}
 
-		if (index === this.size) {
+		if (index === this.#size) {
 			this.append(value);
 			return;
 		}
@@ -137,27 +157,27 @@ class LinkedList {
 
 		nodeBefore.nextNode = nodeToInsert;
 		nodeToInsert.nextNode = nodeAfter;
-		this.size++;
+		this.#size++;
 	}
 
 	removeAt(index) {
-		if (index < 0 || index >= this.size) {
+		if (index < 0 || index >= this.#size) {
 			throw new Error("Invalid index");
 		}
 
-		if (index === this.size - 1) {
+		if (index === this.#size - 1) {
 			this.pop();
 			return;
 		}
 
 		if (index === 0) {
-			this.head = this.head.nextNode;
-			this.size--;
+			this.#head = this.#head.nextNode;
+			this.#size--;
 			return;
 		}
 
 		const [nodeBefore, nodeToRemove] = this.#getNodePair(index);
 		nodeBefore.nextNode = nodeToRemove.nextNode;
-		this.size--;
+		this.#size--;
 	}
 }
