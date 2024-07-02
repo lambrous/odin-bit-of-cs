@@ -31,7 +31,7 @@ class Node {
 	}
 }
 
-class Tree {
+export class Tree {
 	#root = null;
 
 	constructor(array) {
@@ -219,6 +219,7 @@ class Tree {
 	}
 
 	height(node) {
+		if (node == null) return -1;
 		if (!(node instanceof Node)) {
 			throw new Error("Invalid node type");
 		}
@@ -254,5 +255,18 @@ class Tree {
 		}
 
 		return -1;
+	}
+
+	get isBalanced() {
+		const leftHeight = this.height(this.#root.left);
+		const rightHeight = this.height(this.#root.right);
+
+		const diff = leftHeight - rightHeight;
+		return diff >= -1 && diff <= 1;
+	}
+
+	rebalance() {
+		const array = this.#preOrder();
+		this.#root = Tree.buildTree(uniqueSort(array));
 	}
 }
